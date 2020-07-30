@@ -22,6 +22,9 @@
 # Run device
 - adb -s device_name reverse tcp:8081 tcp:8081
 
+# Linking assets
+- npx react-native link
+
 
 # Scroll view: load all info in memory
 # Flat list: load only visible information and re-render
