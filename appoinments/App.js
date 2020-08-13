@@ -1,12 +1,5 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-community/async-storage';
 import {
   FlatList,
   StyleSheet,
@@ -24,35 +17,57 @@ import texts from './text';
 const App: () => React$Node = () => {
   const [showForm, setShowForm] = useState(false);
   const [appoinments, setAppoinments] = useState([
-    {
-      id: 1,
-      patient: 'Angel',
-      owner: 'Dr. Rivera',
-      symptoms: 'Dolor de garganta',
-    },
-    {
-      id: 2,
-      patient: 'Angel',
-      owner: 'Dr. Rivera',
-      symptoms: 'Dolor de garganta',
-    },
-    {
-      id: 3,
-      patient: 'Angel',
-      owner: 'Dr. Rivera',
-      symptoms: 'Dolor de garganta',
-    },
+    // {
+    //   id: 1,
+    //   patient: 'Angel',
+    //   owner: 'Dr. Rivera',
+    //   symptoms: 'Dolor de garganta',
+    // },
+    // {
+    //   id: 2,
+    //   patient: 'Angel',
+    //   owner: 'Dr. Rivera',
+    //   symptoms: 'Dolor de garganta',
+    // },
+    // {
+    //   id: 3,
+    //   patient: 'Angel',
+    //   owner: 'Dr. Rivera',
+    //   symptoms: 'Dolor de garganta',
+    // },
   ]);
 
+  useEffect(() => {
+    const getAppoinments = async () => {
+      try {
+        const apts = await AsyncStorage.getItem('appoinments');
+        if (apts) {
+          setAppoinments(JSON.parse(apts));
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    getAppoinments();
+  }, []);
+
   const deletePatient = (id) => {
-    setAppoinments((apnts) =>  (
-      apnts.filter((appoinment) => appoinment.id !== id)
-    ))
+    const filterAppoinments = appoinments.filter((appoinment) => appoinment.id !== id);
+    setAppoinments(filterAppoinments);
+    setAppoinmentsStorage(JSON.stringify(filterAppoinments));
   };
 
   const updateShowForm = () => setShowForm(!showForm);
 
   const closeKeyboard = () => Keyboard.dismiss();
+
+  const setAppoinmentsStorage = async (apts) => {
+    try {
+      await AsyncStorage.setItem('appoinments', apts);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   return (
     <TouchableWithoutFeedback onPress={() => closeKeyboard()}>
@@ -88,6 +103,7 @@ const App: () => React$Node = () => {
                 <Form
                   appoinments={appoinments}
                   setAppoinments={setAppoinments}
+                  setAppoinmentsStorage={setAppoinmentsStorage}
                   setShowForm={setShowForm} />
               </>
             )  :
@@ -122,7 +138,7 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 10,
     marginTop:  Platform.OS === 'ios' ? 10 : 20,
     textAlign: 'center',
   },
@@ -133,6 +149,7 @@ const styles = StyleSheet.create({
   div: {
     backgroundColor: '#AA076B',
     flex: 1,
+    padding: 40,
   },
   list: {
     backgroundColor: 'red',

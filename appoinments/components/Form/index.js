@@ -13,7 +13,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import shortId from 'shortid';
 import text from './text';
 
-const Form = ({ appoinments, setAppoinments, setShowForm }) => {
+const Form = ({ appoinments, setAppoinments, setAppoinmentsStorage, setShowForm }) => {
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [patient, setPatient] = useState('');
@@ -62,6 +62,7 @@ const Form = ({ appoinments, setAppoinments, setShowForm }) => {
     ].every((field) => field.trim() !== '');
 
     if (!isValid) {
+      showAlert('invalidForm');
       return;
     }
 
@@ -72,6 +73,7 @@ const Form = ({ appoinments, setAppoinments, setShowForm }) => {
     const temp = [...appoinments, appointment];
 
     setAppoinments(temp);
+    setAppoinmentsStorage(JSON.stringify(temp));
     setShowForm(false);
 };
 
